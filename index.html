@@ -175,6 +175,22 @@
 }
 	
 <script type="module">
+	if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("firebase-messaging-sw.js")
+    .then(reg => {
+      console.log("Service Worker registered!", reg);
+    });
+}
+getToken(messaging, {
+  vapidKey: "BuV0hJ_tKZO361BM0u4mcnP5naICPcTYRlEI1uT4_0M"
+}).then((currentToken) => {
+  if (currentToken) {
+    console.log("TOKEN FCM:", currentToken);
+  } else {
+    console.log("Tidak mendapat token.");
+  }
+});
+
   // Import Firebase
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
@@ -634,6 +650,7 @@ complimentBtn.addEventListener("click", () => {
 
 </body>
 </html>
+
 
 
 
