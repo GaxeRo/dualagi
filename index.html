@@ -173,11 +173,84 @@
 .mascot:hover {
     transform: scale(1.1);
 }
+	
+<script type="module">
+  // Import Firebase
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
+
+  // Config dari Firebase Console
+ const firebaseConfig = {
+  apiKey: "AIzaSyAWVllyvpOvS5mDs4IVnHtZXuTvDwGT0Z8",
+  authDomain: "habibah-a1416.firebaseapp.com",
+  projectId: "habibah-a1416",
+  storageBucket: "habibah-a1416.firebasestorage.app",
+  messagingSenderId: "166211722150",
+  appId: "1:166211722150:web:229159150cb95dbd140d67",
+  measurementId: "G-ZXTWQ13DCZ"
+};
+
+  // Init Firebase
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
+
+  // Request izin notifikasi
+  Notification.requestPermission().then((permission) => {
+    if (permission === "granted") {
+      console.log("Izin notifikasi diberikan.");
+    } else {
+      console.log("Izin notifikasi ditolak.");
+    }
+  });
+</script>
 
 </style>
 </head>
 <body>
+	<script>
+// Daftarkan Service Worker
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").then(() => {
+        console.log("Service Worker ready");
+    });
+}
 
+// Minta izin notifikasi
+function requestNotif() {
+    Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+            alert("Izin notifikasi diterima!");
+        } else {
+            alert("Izin notifikasi ditolak.");
+        }
+    });
+}
+</script>
+
+<!-- Tombol minta izin -->
+<button onclick="requestNotif()" 
+style="position:fixed;bottom:140px;right:20px;padding:12px 20px;border:none;border-radius:16px;background:#6f4cff;color:white;font-size:16px;">
+🔔 Izinkan Notifikasi yaww
+</button>
+<script>
+function scheduleNotif() {
+    if (Notification.permission !== "granted") return;
+
+    // Contoh: notifikasi akan muncul setelah 10 detik
+    setTimeout(() => {
+        navigator.serviceWorker.ready.then(reg => {
+            reg.showNotification("Hai cayangg 💗", {
+                body: "Mamass ngingetin Ai jangan begadang yaww 😘",
+                icon: "icon.png"
+            });
+        });
+    }, 10000);
+}
+
+scheduleNotif();
+</script>
+
+	
 <h1>Selamat hari Milad Istrinaa Mamass tercintaa ❤️</h1>
 <p class="message">Mamas membuat halaman kecil ini karena ingin Cayanggkuww tahu… Cayanggkuww selalu spesial di hatinaa Mamass.</p>
 <p class="message">Maafkan Mamass yang masih belum bisa menyempurnakan hubungan kitaa yaw sayangg,</p> 
@@ -188,6 +261,7 @@
     <img src="danmama.jpg" alt="Foto 2" />
     <img src="fian.jpg" alt="Foto 3" />
 </div>
+	
 <!-- SPRITE PIXEL ART MASKOT -->
 <div id="pixel-mascot" title="Klik untuk pesan manis" style="position:fixed;left:18px;bottom:18px;z-index:99999;cursor:pointer;">
   <canvas id="mascot-canvas" width="64" height="64" style="width:96px;height:96px;image-rendering:pixelated;display:block;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,0.18);"></canvas>
@@ -560,6 +634,7 @@ complimentBtn.addEventListener("click", () => {
 
 </body>
 </html>
+
 
 
 
