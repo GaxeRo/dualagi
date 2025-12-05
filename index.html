@@ -173,47 +173,52 @@
 .mascot:hover {
     transform: scale(1.1);
 }
-	<!-- Semua konten web di atas -->
-
-<script>
-// Fungsi buat menampilkan notifikasi di halaman
-function showWebNotification(title, message) {
-    const notif = document.createElement("div");
-    notif.innerHTML = `<strong>${title}</strong><br>${message}`;
-    notif.style.position = "fixed";
-    notif.style.top = "20px";
-    notif.style.right = "20px";
-    notif.style.background = "linear-gradient(135deg, #ffb6c1, #ff69b4)";
-    notif.style.color = "white";
-    notif.style.padding = "14px 20px";
-    notif.style.borderRadius = "12px";
-    notif.style.boxShadow = "0 6px 18px rgba(0,0,0,0.2)";
-    notif.style.zIndex = 99999;
-    notif.style.fontSize = "14px";
-    notif.style.opacity = "0";
-    notif.style.transition = "opacity 0.4s, transform 0.4s";
-    notif.style.transform = "translateY(-20px)";
-    document.body.appendChild(notif);
-
-    requestAnimationFrame(() => {
-        notif.style.opacity = "1";
-        notif.style.transform = "translateY(0)";
-    });
-
-    setTimeout(() => {
-        notif.style.opacity = "0";
-        notif.style.transform = "translateY(-20px)";
-        setTimeout(() => notif.remove(), 400);
-    }, 5000);
-}
-
-// Contoh otomatis muncul setelah halaman load
-window.addEventListener("load", () => {
-    showWebNotification("Cayanggkuww 💖", "Endaa boyee begadang yaww, ini pengingat manis dari Mamass! hheheww");
-});
+	
+  });
 </script>
 
+</style>
+</head>
+<body>
+	<script>
+// Daftarkan Service Worker
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").then(() => {
+        console.log("Service Worker ready");
+    });
+}
 
+// Minta izin notifikasi
+function requestNotif() {
+    Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+            alert("Izin notifikasi diterima!");
+        } else {
+            alert("Izin notifikasi ditolak.");
+        }
+    });
+}
+</script>
+
+<script>
+function scheduleNotif() {
+    if (Notification.permission !== "granted") return;
+
+    // Contoh: notifikasi akan muncul setelah 10 detik
+    setTimeout(() => {
+        navigator.serviceWorker.ready.then(reg => {
+            reg.showNotification("Hai cayangg 💗", {
+                body: "Mamass ngingetin Ai jangan begadang yaww 😘",
+                icon: "icon.png"
+            });
+        });
+    }, 10000);
+}
+
+scheduleNotif();
+</script>
+
+	
 <h1>Selamat hari Milad Istrinaa Mamass tercintaa ❤️</h1>
 <p class="message">Mamas membuat halaman kecil ini karena ingin Cayanggkuww tahu… Cayanggkuww selalu spesial di hatinaa Mamass.</p>
 <p class="message">Maafkan Mamass yang masih belum bisa menyempurnakan hubungan kitaa yaw sayangg,</p> 
@@ -430,7 +435,7 @@ btn.addEventListener("click",()=>{
 
   <!-- VIDEO PLAYER -->
   <section class="video-section fadeIn" style="margin-top:40px; text-align:center;">
-    <h2 style="font-family:'Poppins'; font-weight:600; color:#ff6b81;">Video berduwaa" 🎥</h2>
+    <h2 style="font-family:'Poppins'; font-weight:600; color:#ff6b81;">Video Cama" 🎥</h2>
     <video controls style="width:90%; max-width:700px; border-radius:14px; box-shadow:0 8px 22px rgba(0,0,0,0.15);">
       <source src="terapi.mp4" type="video/mp4">
       Browser kamu tidak mendukung video.
@@ -441,7 +446,7 @@ btn.addEventListener("click",()=>{
   <a href="https://shopee.co.id/Zeodda-Yoona-Sepatu-Sneaker-Wanita-Korea-Sporty-Traning-Jogging-free-Kotak-1031-i.867817945.21653220359?xptdk=d7300589-fa1c-4e88-a176-98f564185a30" target="_blank"
      style="padding:14px 24px; background:#ff5fa8; color:white; border-radius:20px;
      font-size:18px; text-decoration:none; box-shadow:0 5px 15px rgba(0,0,0,0.15);">
-     🎁 Hadiah dari Mamass
+     🎁 Hadiah Cayanggkuww
   </a>
 </div>
 
@@ -547,7 +552,7 @@ complimentBtn.addEventListener("click", () => {
         bubble.style.opacity = 0;
     }, 1800);
 
-    setTimeout(() => bubble.remove(), 2500);
+    setTimeout(() => bubble.remove(), 7000);
 });
 </script>
 
@@ -593,11 +598,12 @@ complimentBtn.addEventListener("click", () => {
     lb.addEventListener('click', e => {
       if(e.target === lb) lb.style.display = 'none';
     });
-  </script>
-
+	
+	
+</script>
 
 </body>
-</html>
+</html>                                           
 
 
 
