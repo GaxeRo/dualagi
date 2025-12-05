@@ -512,6 +512,48 @@ btn.addEventListener("click",()=>{
     }
   </style>
   
+  <script>
+// Fungsi buat menampilkan notifikasi di halaman
+function showWebNotification(title, message) {
+    const notif = document.createElement("div");
+    notif.innerHTML = `<strong>${title}</strong><br>${message}`;
+    notif.style.position = "fixed";
+    notif.style.top = "20px";
+    notif.style.right = "20px";
+    notif.style.background = "linear-gradient(135deg, #ffb6c1, #ff69b4)";
+    notif.style.color = "white";
+    notif.style.padding = "14px 20px";
+    notif.style.borderRadius = "12px";
+    notif.style.boxShadow = "0 6px 18px rgba(0,0,0,0.2)";
+    notif.style.zIndex = 99999;
+    notif.style.fontSize = "14px";
+    notif.style.opacity = "0";
+    notif.style.transition = "opacity 0.4s, transform 0.4s";
+    notif.style.transform = "translateY(-20px)";
+    document.body.appendChild(notif);
+
+    // Animasi muncul
+    requestAnimationFrame(() => {
+        notif.style.opacity = "1";
+        notif.style.transform = "translateY(0)";
+    });
+
+    // Hilang setelah 3 detik (atau sesuai durasi)
+    setTimeout(() => {
+        notif.style.opacity = "0";
+        notif.style.transform = "translateY(-20px)";
+        setTimeout(() => notif.remove(), 400);
+    }, 4000); // notifikasi tampil 3 detik
+}
+
+// Notifikasi otomatis setiap 5 detik
+setInterval(() => {
+    showWebNotification("Cayanggkuww 💖", "Mamass ngingetin Ai ndaa boyee begadang yaww! 😘");
+}, 10000); 
+</script>
+
+
+  
 <script>
 const complimentBtn = document.getElementById("complimentBtn");
 
