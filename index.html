@@ -512,48 +512,6 @@ btn.addEventListener("click",()=>{
     }
   </style>
   
-  <script>
-// Fungsi buat menampilkan notifikasi di halaman
-function showWebNotification(title, message) {
-    const notif = document.createElement("div");
-    notif.innerHTML = `<strong>${title}</strong><br>${message}`;
-    notif.style.position = "fixed";
-    notif.style.top = "20px";
-    notif.style.right = "20px";
-    notif.style.background = "linear-gradient(135deg, #ffb6c1, #ff69b4)";
-    notif.style.color = "white";
-    notif.style.padding = "14px 20px";
-    notif.style.borderRadius = "12px";
-    notif.style.boxShadow = "0 6px 18px rgba(0,0,0,0.2)";
-    notif.style.zIndex = 99999;
-    notif.style.fontSize = "14px";
-    notif.style.opacity = "0";
-    notif.style.transition = "opacity 0.4s, transform 0.4s";
-    notif.style.transform = "translateY(-20px)";
-    document.body.appendChild(notif);
-
-    // Animasi muncul
-    requestAnimationFrame(() => {
-        notif.style.opacity = "1";
-        notif.style.transform = "translateY(0)";
-    });
-
-    // Hilang setelah 3 detik (atau sesuai durasi)
-    setTimeout(() => {
-        notif.style.opacity = "0";
-        notif.style.transform = "translateY(-20px)";
-        setTimeout(() => notif.remove(), 400);
-    }, 4000); // notifikasi tampil 3 detik
-}
-
-// Notifikasi otomatis setiap 5 detik
-setInterval(() => {
-    showWebNotification("Notifikasi cantik dari Mamass! 💖", "Mamass ngingetin Ai ndaa boyee begadang yaww Sayangg😘");
-}, 10000); 
-</script>
-
-
-  
 <script>
 const complimentBtn = document.getElementById("complimentBtn");
 
@@ -640,13 +598,71 @@ complimentBtn.addEventListener("click", () => {
     lb.addEventListener('click', e => {
       if(e.target === lb) lb.style.display = 'none';
     });
-	
-	
 </script>
+
+<script>
+// Fungsi buat membuat notifikasi dengan posisi acak
+function showFloatingNotification(message) {
+    const bubble = document.createElement("div");
+    bubble.textContent = message;
+    bubble.style.position = "fixed";
+
+    // --- POSISI ACAK ---
+    const randomTop = Math.floor(Math.random() * (window.innerHeight - 120)) + 20;
+    const randomRight = Math.floor(Math.random() * (window.innerWidth - 200)) + 20;
+
+    bubble.style.top = randomTop + "px";
+    bubble.style.left = randomRight + "px";
+    // --------------------
+
+    bubble.style.background = "linear-gradient(135deg, #ffb6c1, #ff69b4)";
+    bubble.style.color = "white";
+    bubble.style.padding = "12px 18px";
+    bubble.style.borderRadius = "16px";
+    bubble.style.boxShadow = "0 6px 18px rgba(0,0,0,0.2)";
+    bubble.style.fontSize = "14px";
+    bubble.style.opacity = "0";
+    bubble.style.transform = "scale(0.8)";
+    bubble.style.transition = "opacity 0.5s, transform 0.5s";
+    bubble.style.zIndex = 99999;
+    
+    document.body.appendChild(bubble);
+
+    // Animasi muncul
+    requestAnimationFrame(() => {
+        bubble.style.opacity = "1";
+        bubble.style.transform = "scale(1)";
+    });
+
+    // Hilang otomatis setelah 5 detik
+    setTimeout(() => {
+        bubble.style.opacity = "0";
+        bubble.style.transform = "scale(0.8)";
+        setTimeout(() => bubble.remove(), 500);
+    }, 4000);
+}
+
+// Array pesan
+const messages = [
+    "Cayanggkuww 💖, Enda boyee begadang yaww 😘",
+    "Mamass sayang camaa Aii teruss 🌸",
+    "Semangat teyus yaw Cayangkuww ✨",
+    "Jangan lupa Maamm rutinn 💕",
+    "Cayanggkuww hebat banget hari iniww 🥰"
+];
+
+// Notifikasi muncul otomatis setiap 5 detik
+setInterval(() => {
+    const msg = messages[Math.floor(Math.random() * messages.length)];
+    showFloatingNotification(msg);
+}, 10000);
+</script>
+
+
+	
 
 </body>
 </html>                                           
-
 
 
 
