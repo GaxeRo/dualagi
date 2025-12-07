@@ -180,25 +180,6 @@
 </style>
 </head>
 <body>
-	<script>
-// Daftarkan Service Worker
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js").then(() => {
-        console.log("Service Worker ready");
-    });
-}
-
-// Minta izin notifikasi
-function requestNotif() {
-    Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-            alert("Izin notifikasi diterima!");
-        } else {
-            alert("Izin notifikasi ditolak.");
-        }
-    });
-}
-</script>
 
 <script>
 function scheduleNotif() {
@@ -230,136 +211,201 @@ scheduleNotif();
     <img src="fian.jpg" alt="Foto 3" />
 </div>
 	
-<!-- SPRITE PIXEL ART MASKOT -->
-<div id="pixel-mascot" title="Klik untuk pesan manis" style="position:fixed;left:18px;bottom:18px;z-index:99999;cursor:pointer;">
-  <canvas id="mascot-canvas" width="64" height="64" style="width:96px;height:96px;image-rendering:pixelated;display:block;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,0.18);"></canvas>
+<!-- MASKOT PIXEL VERSI SUPER -->
+<div id="pixel-mascot" style="
+  position:fixed;
+  bottom:18px;
+  left:40px;
+  width:96px;height:96px;
+  cursor:pointer;
+  image-rendering:pixelated;
+  z-index:999999;
+">
+  <canvas id="mascot-canvas" width="64" height="64" style="width:96px;height:96px;"></canvas>
 </div>
 
-<style>
-/* bobbing lembut */
-#pixel-mascot {
-  animation: mascot-bob 3s ease-in-out infinite;
-}
-@keyframes mascot-bob{
-  0%{ transform: translateY(0); }
-  50%{ transform: translateY(-8px); }
-  100%{ transform: translateY(0); }
-}
-
-/* efek hover */
-#pixel-mascot:hover { transform: translateY(-10px) scale(1.04); transition: transform .18s; }
-</style>
-
 <script>
-// ---------- simple pixel sprite engine (small & self-contained) ----------
-
-// Palette (index -> color)
+// ------------------------------------------------
+// PALETTE
+// ------------------------------------------------
 const palette = [
-  null,            // 0 = transparent
-  '#ffd6c7',       // 1 = skin
-  '#8b3b81',       // 2 = hair / hat
-  '#ff7ab2',       // 3 = dress / shirt
-  '#ffffff',       // 4 = eye white / highlight
-  '#111111',       // 5 = eye black
-  '#ffb7d6'        // 6 = blush
+  null,
+  '#ffd6c7', // skin
+  '#8b3b81', // hair
+  '#ff7ab2', // baju
+  '#ffffff', // eye white
+  '#111111', // eye black
+  '#ffb7d6'  // blush
 ];
 
-// Each frame is 8x8 indexes (row-major). 0 = transparent.
-// We'll use two frames (arm down, arm up) to simulate a wave.
-const frames = [
-  // frame 0 (idle / arm down)
-  [
-    0,0,2,2,2,2,0,0,
-    0,2,2,2,3,2,2,0,
-    2,2,1,1,1,1,2,2,
-    2,1,1,4,4,1,1,2,
-    0,1,5,1,1,5,1,0,
-    0,1,1,3,3,1,1,0,
-    0,0,3,3,3,3,0,0,
-    0,0,0,3,0,0,0,0
-  ],
-  // frame 1 (arm up - slight change)
-  [
-    0,0,2,2,2,2,0,0,
-    0,2,2,2,3,2,2,0,
-    2,2,1,1,1,1,2,2,
-    2,1,1,4,4,1,1,2,
-    0,1,5,1,1,5,1,0,
-    0,1,1,3,3,1,1,0,
-    0,0,3,0,3,3,0,0, // moved a pixel to make arm look lifted
-    0,0,0,3,0,0,0,0
-  ]
+// ------------------------------------------------
+// FRAME: JALAN KAKI 4 FRAME
+// ------------------------------------------------
+const walkFrames = [
+  [0,0,2,2,2,2,0,0,0,2,2,2,3,2,2,0,2,2,1,1,1,1,2,2,2,1,1,4,4,1,1,2,0,1,5,1,1,5,1,0,0,1,1,3,3,1,1,0,0,0,3,3,3,3,0,0,0,0,3,0,0,3,0,0],
+  [0,0,2,2,2,2,0,0,0,2,2,2,3,2,2,0,2,2,1,1,1,1,2,2,2,1,1,4,4,1,1,2,0,1,5,1,1,5,1,0,0,1,1,3,3,1,1,0,0,0,3,0,3,3,0,0,0,3,0,0,0,3,0,0],
+  [0,0,2,2,2,2,0,0,0,2,2,2,3,2,2,0,2,2,1,1,1,1,2,2,2,1,1,4,4,1,1,2,0,1,5,1,1,5,1,0,0,1,1,3,3,1,1,0,0,0,3,3,3,3,0,0,0,0,0,3,0,0,0,0],
+  [0,0,2,2,2,2,0,0,0,2,2,2,3,2,2,0,2,2,1,1,1,1,2,2,2,1,1,4,4,1,1,2,0,1,5,1,1,5,1,0,0,1,1,3,3,1,1,0,3,0,0,3,0,0,3,0,0,0,0,3,0,0,0,0]
 ];
 
-const canvas = document.getElementById('mascot-canvas');
-const ctx = canvas.getContext('2d');
-const pixelScale = 8; // each sprite pixel -> 8x8 canvas pixels
+// ------------------------------------------------
+// FRAME: DUDUK (IDLE)
+// ------------------------------------------------
+const sitFrame = [
+  0,0,2,2,2,2,0,0,
+  0,2,2,2,3,2,2,0,
+  2,2,1,1,1,1,2,2,
+  2,1,1,4,4,1,1,2,
+  0,1,5,1,1,5,1,0,
+  0,1,1,3,3,1,1,0,
+  0,0,3,3,3,3,0,0,
+  0,3,3,0,0,3,3,0
+];
 
-// ensure crisp pixels when scaled in CSS
+// ------------------------------------------------
+// FRAME: LAMBAI TANGAN
+// ------------------------------------------------
+const waveFrame = [
+  0,0,2,2,2,2,0,0,
+  0,2,2,2,3,2,2,0,
+  2,2,1,1,1,1,2,2,
+  2,1,1,4,4,1,1,2,
+  3,1,5,1,1,5,1,0,
+  0,1,1,3,3,1,3,0,
+  0,0,3,0,3,3,0,0,
+  0,3,0,0,0,0,3,0
+];
+
+// ------------------------------------------------
+// CANVAS SETUP
+// ------------------------------------------------
+const canvas = document.getElementById("mascot-canvas");
+const ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false;
 
-let frameIndex = 0;
-function drawFrame(frameArr){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  const size = 8; // 8x8 sprite
-  for(let y=0;y<size;y++){
-    for(let x=0;x<size;x++){
-      const idx = frameArr[y*size + x];
-      if(!idx) continue;
+function drawFrame(data){
+  ctx.clearRect(0,0,64,64);
+  for(let y=0; y<8; y++){
+    for(let x=0; x<8; x++){
+      const idx = data[y*8+x];
+      if(idx===0) continue;
       ctx.fillStyle = palette[idx];
-      ctx.fillRect(x*pixelScale, y*pixelScale, pixelScale, pixelScale);
+      ctx.fillRect(x*8, y*8, 8, 8);
     }
   }
 }
 
-// animate between frames (toggle)
-setInterval(()=>{
-  drawFrame(frames[frameIndex]);
-  frameIndex = (frameIndex + 1) % frames.length;
-}, 400); // swap frames every 400ms
+// ------------------------------------------------
+// GERAK JALAN
+// ------------------------------------------------
+let x = 40;
+let dir = 1;
+let frame = 0;
+let lastMove = Date.now();
+let isSitting = false;
+let isJumping = false;
+let waveTimer = 0;
 
-// initial draw
-drawFrame(frames[0]);
+function animate(){
+  const now = Date.now();
 
-// click -> show compliment bubble
-document.getElementById('pixel-mascot').addEventListener('click', () => {
-  const texts = [
-    "Mamass Cayangg cama Aii 💖",
-    "Mamass Cayangg cama Fibah ✨",
-    "Mamass Cayangg cama Biyan hheheww 🌸"
+  // Jika idle lebih dari 4 detik → duduk
+  if(now - lastMove > 4000 && !isJumping){
+    isSitting = true;
+    drawFrame(sitFrame);
+  }
+
+  // animasi loncat
+  if(isJumping){
+    const masc = document.getElementById("pixel-mascot");
+    masc.style.bottom = (18 + Math.sin(now / 120)*40) + "px";
+  }
+
+  // Jalan normal
+  if(!isSitting && !isJumping && waveTimer <= 0){
+    frame = (frame + 1) % walkFrames.length;
+    drawFrame(walkFrames[frame]);
+
+    x += dir * 1.2;
+    if(x > window.innerWidth - 120){ dir = -1; }
+    if(x < 10){ dir = 1; }
+
+    document.getElementById("pixel-mascot").style.left = x + "px";
+  }
+
+  // Hitung wave gesture
+  if(waveTimer > 0){
+    waveTimer -= 16;
+    drawFrame(waveFrame);
+  }
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+// ------------------------------------------------
+// KLIK = LAMBAI TANGAN + KELUARIN PESAN
+// ------------------------------------------------
+document.getElementById("pixel-mascot").addEventListener("click", ()=>{
+
+  isSitting = false;
+  lastMove = Date.now();
+
+  waveTimer = 700; // 0.7 detik lambaian
+
+  const msgs = [
+    "Hii cayang Mamass ♡",
+    "Mamass kangen awhh 😚",
+    "Aii lucuu bangett!",
+    "Cayangg paling gemayyy 💕"
   ];
-  const msg = texts[Math.floor(Math.random()*texts.length)];
 
-  const bubble = document.createElement('div');
-  bubble.textContent = msg;
-  bubble.style.position = 'fixed';
-  bubble.style.bottom = '130px';
-  bubble.style.right = '20px';
-  bubble.style.maxWidth = '260px';
-  bubble.style.padding = '10px 14px';
-  bubble.style.background = 'linear-gradient(180deg,#fff,#ffeef6)';
-  bubble.style.border = '1px solid rgba(255,100,150,0.15)';
-  bubble.style.borderRadius = '12px';
-  bubble.style.boxShadow = '0 6px 18px rgba(0,0,0,0.12)';
-  bubble.style.fontSize = '14px';
-  bubble.style.zIndex = 200000;
-  bubble.style.opacity = '0';
-  bubble.style.transform = 'translateY(6px)';
-  bubble.style.transition = 'all .36s cubic-bezier(.2,.9,.2,1)';
+  const bubble = document.createElement("div");
+  bubble.innerHTML = msgs[Math.floor(Math.random()*msgs.length)];
+  bubble.style.position="fixed";
+  bubble.style.bottom="130px";
+  bubble.style.left=(x+40)+"px";
+  bubble.style.background="#fff";
+  bubble.style.padding="10px 14px";
+  bubble.style.borderRadius="12px";
+  bubble.style.boxShadow="0 4px 14px rgba(0,0,0,0.2)";
+  bubble.style.opacity="0";
+  bubble.style.transition="all .3s";
 
   document.body.appendChild(bubble);
 
-  // animate in
-  requestAnimationFrame(()=>{ bubble.style.opacity = '1'; bubble.style.transform = 'translateY(0)'; });
+  requestAnimationFrame(()=>{
+    bubble.style.opacity="1";
+  });
 
   setTimeout(()=>{
-    bubble.style.opacity = '0';
-    bubble.style.transform = 'translateY(-6px)';
-  }, 2200);
-
-  setTimeout(()=> bubble.remove(), 2600);
+    bubble.style.opacity="0";
+    setTimeout(()=>bubble.remove(),400);
+  },1600);
 });
+
+// ------------------------------------------------
+// LOMPAT SETIAP 6–10 DETIK
+// ------------------------------------------------
+setInterval(()=>{
+  if(isSitting) return;
+  isJumping = true;
+
+  setTimeout(()=>{
+    document.getElementById("pixel-mascot").style.bottom = "18px";
+    isJumping = false;
+    lastMove = Date.now();
+  }, 800);
+}, Math.random()*4000 + 6000);
+
+// ------------------------------------------------
+// GERAK = RESET IDLE SIT
+// ------------------------------------------------
+window.addEventListener("mousemove", ()=> lastMove = Date.now());
 </script>
+
+
 
 
 <script>
