@@ -5,6 +5,77 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>❤23-3-2009❤</title>
 <style>
+
+/* TIMELINE */
+.timeline-section {
+    margin-top: 60px;
+    padding: 20px;
+    text-align: center;
+}
+
+.timeline-title {
+    font-size: 1.8rem;
+    color: #ff6b98;
+    text-shadow: 0 0 8px rgba(255,255,255,0.7);
+    margin-bottom: 30px;
+}
+
+.timeline {
+    width: 90%;
+    max-width: 600px;
+    margin: auto;
+    position: relative;
+}
+
+.timeline::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 100%;
+    background: #ffb6d9;
+    border-radius: 10px;
+}
+
+.t-item {
+    position: relative;
+    width: 100%;
+    margin: 40px 0;
+    opacity: 0;
+    transform: translateY(35px);
+    transition: all 0.7s ease;
+}
+
+.t-item.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.t-content {
+    background: white;
+    padding: 18px 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    width: 75%;
+    position: relative;
+}
+
+.t-item:nth-child(odd) .t-content {
+    margin-right: auto;
+}
+
+.t-item:nth-child(even) .t-content {
+    margin-left: auto;
+}
+
+.t-content h3 {
+    color: #d63384;
+    margin-bottom: 8px;
+}
+
+
     body {
         margin: 0;
         padding: 0;
@@ -173,8 +244,32 @@
 .mascot:hover {
     transform: scale(1.1);
 }
-	
-  });
+  
+ /* === NIGHT MODE === */
+body.night {
+    background: linear-gradient(135deg, #1a1a2e, #3d2c4a);
+    color: #ffe4f7 !important;
+}
+
+.star {
+    position: fixed;
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: twinkle 2s infinite ease-in-out;
+    pointer-events: none;
+}
+
+@keyframes twinkle {
+    0% { opacity: .2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.4); }
+    100% { opacity: .2; transform: scale(0.8); }
+}
+
+
+
 </script>
 
 </style>
@@ -210,6 +305,31 @@ scheduleNotif();
     <img src="danmama.jpg" alt="Foto 2" />
     <img src="fian.jpg" alt="Foto 3" />
 </div>
+	
+	
+	
+<script>
+// === NIGHT MODE AUTO ===
+function enableNightMode() {
+    document.body.classList.add("night");
+
+    // buat bintang
+    for (let i = 0; i < 40; i++) {
+        let star = document.createElement("div");
+        star.className = "star";
+        star.style.top = Math.random() * 100 + "vh";
+        star.style.left = Math.random() * 100 + "vw";
+        star.style.animationDelay = Math.random() * 2 + "s";
+        document.body.appendChild(star);
+    }
+}
+
+let now = new Date();
+if (now.getHours() >= 18) {
+    enableNightMode();
+}
+</script>
+
 	
 <!-- MASKOT PIXEL VERSI SUPER -->
 <div id="pixel-mascot" style="
@@ -405,7 +525,174 @@ setInterval(()=>{
 window.addEventListener("mousemove", ()=> lastMove = Date.now());
 </script>
 
+<script>
+const mascot = document.getElementById("pixel-mascot");
+let lastActivity = Date.now();
+let mood = "idle";
 
+// -------- fungsi ubah mood (ganti ekspresi maskot) --------
+function setMood(newMood) {
+    mood = newMood;
+
+    if (newMood === "happy") mascot.style.filter = "brightness(1.15)";
+    if (newMood === "sad") mascot.style.filter = "brightness(0.8) grayscale(30%)";
+    if (newMood === "excited") mascot.style.transform = "scale(1.1)";
+    if (newMood === "sleep") mascot.style.filter = "blur(1px) brightness(0.7)";
+    if (newMood === "idle") mascot.style.filter = "none";
+}
+
+// -------- reset kondisi setiap aktivitas --------
+function resetIdle() {
+    lastActivity = Date.now();
+    if (mood === "sleep" || mood === "sad") {
+        setMood("idle");
+    }
+}
+window.addEventListener("mousemove", resetIdle);
+window.addEventListener("keydown", resetIdle);
+window.addEventListener("click", resetIdle);
+
+// -------- mood berdasarkan aksi user --------
+
+// Klik → happy
+mascot.addEventListener("click", () => {
+    setMood("happy");
+    setTimeout(() => setMood("idle"), 1500);
+});
+
+// Scroll → excited
+window.addEventListener("scroll", () => {
+    setMood("excited");
+    setTimeout(() => setMood("idle"), 800);
+});
+
+// Hover → maskot melambai (naik turun)
+mascot.addEventListener("mouseenter", () => {
+    mascot.style.animation = "mascotWave 0.4s alternate infinite";
+});
+mascot.addEventListener("mouseleave", () => {
+    mascot.style.animation = "mascot-bob 3s ease-in-out infinite";
+});
+
+// Animasi wave
+const waveAnim = `
+@keyframes mascotWave {
+    0% { transform: translateY(-6px); }
+    100% { transform: translateY(-12px); }
+}`;
+let styleTag = document.createElement("style");
+styleTag.textContent = waveAnim;
+document.head.appendChild(styleTag);
+
+// -------- Idle checker (10 detik tidak ada aktivitas) --------
+setInterval(() => {
+    if (Date.now() - lastActivity > 10000) {
+        setMood("sleep");
+    }
+}, 1000);
+</script>
+
+<script>
+// ---- PESAN RAHASIA KLIK 3x FOTO ----
+let secretClickCount = 0;
+let secretTimer = null;
+
+function showSecretMessage() {
+    const box = document.createElement("div");
+    box.textContent = "Cayanggkuww... Mamass selalu nyimpen sesuatu untuk Cayang💗";
+    box.style.position = "fixed";
+    box.style.top = "50%";
+    box.style.left = "50%";
+    box.style.transform = "translate(-50%, -50%) scale(0.7)";
+    box.style.background = "linear-gradient(135deg,#ff9acb,#ffc7dd)";
+    box.style.padding = "20px 28px";
+    box.style.borderRadius = "16px";
+    box.style.fontSize = "16px";
+    box.style.boxShadow = "0 8px 22px rgba(0,0,0,0.25)";
+    box.style.color = "#fff";
+    box.style.opacity = "0";
+    box.style.zIndex = "999999";
+    box.style.transition = "all .4s cubic-bezier(.2,.9,.2,1)";
+    
+    document.body.appendChild(box);
+
+    setTimeout(() => {
+        box.style.opacity = "1";
+        box.style.transform = "translate(-50%, -50%) scale(1)";
+    }, 50);
+
+    setTimeout(() => {
+        box.style.opacity = "0";
+        box.style.transform = "translate(-50%, -60%) scale(0.6)";
+        setTimeout(() => box.remove(), 500);
+    }, 3000);
+}
+
+// Daftar semua foto (yang ada di class .photos & .g-item)
+const photoElements = document.querySelectorAll(".photos img, .g-item");
+
+// Event klik untuk setiap foto
+photoElements.forEach(img => {
+    img.addEventListener("click", () => {
+        secretClickCount++;
+
+        if (secretTimer) clearTimeout(secretTimer);
+
+        // reset hitungan kalau terlalu lama
+        secretTimer = setTimeout(() => {
+            secretClickCount = 0;
+        }, 1500);
+
+        // Jika klik 3x dalam 1.5 detik → tampilkan pesan
+        if (secretClickCount === 3) {
+            secretClickCount = 0;
+            showSecretMessage();
+        }
+    });
+});
+</script>
+
+<!-- MEMORY TIMELINE -->
+<section class="timeline-section">
+    <h2 class="timeline-title">📜 Timeline Kenangan Kitaww</h2>
+
+    <div class="timeline">
+
+        <div class="t-item">
+
+        <div class="t-item">
+            <div class="t-content">
+                <h3>2024 — Awal bertemu</h3>
+                <p>di WhatsApp Sayangg chat duluwann, rezekinyaa kita, mamass ngebales chatnaa Aii dengan kasih cayangg hheheww.</p>
+            </div>
+        </div>
+		<div class="t-item">
+            <div class="t-content">
+                <h3>2025 — Fase pertama</h3>
+                <p>Walaupun banyak naik turunnya, tapi Mamass tetap pilih Cayanggkuww setiap hari, dalam fase ini kitaa mendapat banyak sekali pengalaman, dari semua cobaan Allah terhadap kita yang cukup memperjuangkan hubungan kitaww, bukti cinta dan kasih sayang kita bisa lewati bercamaa</p>  
+            </div>
+        </div>
+
+
+    </div>
+</section>
+
+<script>
+// Animasi timeline muncul saat discroll
+const timelineItems = document.querySelectorAll('.t-item');
+
+function checkTimeline() {
+    const trigger = window.innerHeight * 0.85;
+
+    timelineItems.forEach(item => {
+        const top = item.getBoundingClientRect().top;
+        if (top < trigger) item.classList.add('show');
+    });
+}
+
+window.addEventListener('scroll', checkTimeline);
+window.addEventListener('load', checkTimeline);
+</script>
 
 
 <script>
@@ -473,6 +760,10 @@ btn.addEventListener("click",()=>{
     <h2 style="font-family:'Poppins'; font-weight:600; color:#ff6b81;">Galeri Kecil Kenangan Kitaww</h2>
     <div class="gallery-wrapper">
       <img src="berdua1.jpg" class="g-item">
+      <img src="dewe1.jpg" class="g-item">
+      <img src="dewe2.jpg" class="g-item">
+      <img src="dewe.jpg" class="g-item">
+	  <img src="berdua1.jpg" class="g-item">
       <img src="dewe1.jpg" class="g-item">
       <img src="dewe2.jpg" class="g-item">
       <img src="dewe.jpg" class="g-item">
@@ -598,7 +889,7 @@ complimentBtn.addEventListener("click", () => {
         bubble.style.opacity = 0;
     }, 1800);
 
-    setTimeout(() => bubble.remove(), 7000);
+    setTimeout(() => bubble.remove(), 10000);
 });
 </script>
 
