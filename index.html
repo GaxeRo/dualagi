@@ -296,8 +296,6 @@ body.night {
     50% { opacity: 1; transform: scale(1.4); }
     100% { opacity: .2; transform: scale(0.8); }
 }
-	
-</script>
 
 /* ==== RESPONSIVE MOBILE FIX ==== */
 @media (max-width: 600px) {
@@ -407,11 +405,30 @@ body.night {
         max-width: 80%;
     }
 }
+</script>
 
-	
 </style>
 </head>
 <body>
+
+<script>
+function scheduleNotif() {
+    if (Notification.permission !== "granted") return;
+
+    // Contoh: notifikasi akan muncul setelah 10 detik
+    setTimeout(() => {
+        navigator.serviceWorker.ready.then(reg => {
+            reg.showNotification("Hai cayangg 💗", {
+                body: "Mamass ngingetin Ai jangan begadang yaww 😘",
+                icon: "icon.png"
+            });
+        });
+    }, 10000);
+}
+
+scheduleNotif();
+</script>
+
 	
 <h1>Selamat hari Milad Istrinaa Mamass tercintaa ❤️</h1>
 <p class="message">Mamas membuat halaman kecil ini karena ingin Cayanggkuww tahu… Cayanggkuww selalu spesial di hatinaa Mamass.</p>
@@ -750,7 +767,7 @@ let secretTimer = null;
 
 function showSecretMessage() {
     const box = document.createElement("div");
-    box.textContent = "Cayanggkuww... hheheww sukaa camaa fotona yaww dipencet" 💗";
+    box.textContent = "Cayanggkuww... Mamass selalu nyimpen sesuatu untuk Cayang💗";
     box.style.position = "fixed";
     box.style.top = "50%";
     box.style.left = "50%";
@@ -1040,7 +1057,7 @@ complimentBtn.addEventListener("click", () => {
         bubble.style.opacity = 0;
     }, 1800);
 
-    setTimeout(() => bubble.remove(), 15000);
+    setTimeout(() => bubble.remove(), 10000);
 });
 </script>
 
@@ -1151,9 +1168,6 @@ setInterval(() => {
 
 </body>
 </html>                                           
-
-
-
 
 
 
