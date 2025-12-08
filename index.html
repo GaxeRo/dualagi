@@ -6,6 +6,35 @@
 <title>❤23-3-2009❤</title>
 <style>
 
+/* LOVE VIBRATION EFFECT */
+.love-vibration {
+    animation: loveVibrate 0.4s ease-in-out;
+}
+
+@keyframes loveVibrate {
+    0%   { transform: scale(1) rotate(0deg); }
+    20%  { transform: scale(1.08) rotate(3deg); }
+    40%  { transform: scale(0.96) rotate(-3deg); }
+    60%  { transform: scale(1.05) rotate(2deg); }
+    80%  { transform: scale(1) rotate(0deg); }
+    100% { transform: scale(1); }
+}
+
+/* Efek hati kecil muncul dari klik */
+.click-heart {
+    position: fixed;
+    color: #ff6da9;
+    font-size: 24px;
+    pointer-events: none;
+    animation: clickHeartFloat 0.8s ease-out forwards;
+}
+
+@keyframes clickHeartFloat {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-40px) scale(1.6); }
+}
+
+	
 /* TIMELINE */
 .timeline-section {
     margin-top: 60px;
@@ -306,6 +335,39 @@ scheduleNotif();
     <img src="fian.jpg" alt="Foto 3" />
 </div>
 	
+<script>
+// Tambahkan Love Vibration + efek hati pas klik
+function addLoveVibration(targetElement) {
+    targetElement.classList.add("love-vibration");
+    setTimeout(() => targetElement.classList.remove("love-vibration"), 500);
+
+    // Buat hati kecil
+    const heart = document.createElement("div");
+    heart.classList.add("click-heart");
+    heart.textContent = "💖";
+    heart.style.left = event.clientX + "px";
+    heart.style.top = event.clientY + "px";
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 800);
+}
+
+// Terapkan ke foto
+document.querySelectorAll(".photos img, .g-item").forEach(img => {
+    img.addEventListener("click", function(e){
+        addLoveVibration(this);
+    });
+});
+
+// Terapkan ke maskot
+const mascot = document.getElementById("pixel-mascot");
+if (mascot) {
+    mascot.addEventListener("click", function(e){
+        addLoveVibration(this);
+    });
+}
+</script>
 	
 	
 <script>
@@ -1000,6 +1062,7 @@ setInterval(() => {
 
 </body>
 </html>                                           
+
 
 
 
