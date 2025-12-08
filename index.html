@@ -297,6 +297,80 @@ body.night {
     100% { opacity: .2; transform: scale(0.8); }
 }
 
+/* === LOVE WEATHER STYLE === */
+
+/* PAGI (05.00–10.00) */
+.love-morning {
+    background: linear-gradient(135deg, #ffe7c7, #ffd3e0);
+}
+
+/* SIANG (10.00–15.00) */
+.love-day {
+    background: linear-gradient(135deg, #fff1f4, #ffd6ec);
+}
+
+/* SORE (15.00–18.00) */
+.love-evening {
+    background: linear-gradient(135deg, #ffc8a9, #ff9acb);
+}
+
+/* MALAM (18.00–05.00) — sudah punya night mode, tapi kita buat versi love-night */
+.love-night {
+    background: linear-gradient(135deg, #1a1a2e, #3d2c4a);
+}
+
+/* === RAINBOW EFFECT === */
+
+.rainbow-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 12px;
+    background: linear-gradient(
+        90deg,
+        #ff7aa2,
+        #ffb3c6,
+        #ffd6e7,
+        #c7eaff,
+        #a7d8ff,
+        #b9a7ff,
+        #ffb7f5
+    );
+    opacity: 0.8;
+    z-index: 999999;
+    animation: rainbowMove 5s linear infinite;
+}
+
+@keyframes rainbowMove {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+/* Rainbow Glow di background */
+.rainbow-glow {
+    position: fixed;
+    bottom: -10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200%;
+    height: 80%;
+    background: radial-gradient(
+        circle,
+        rgba(255,183,236,0.25),
+        rgba(255,183,236,0.05),
+        transparent
+    );
+    animation: rainbowGlowAnim 6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes rainbowGlowAnim {
+    0% { transform: translateX(-50%) translateY(0) scale(1); }
+    50% { transform: translateX(-50%) translateY(20px) scale(1.1); }
+    100% { transform: translateX(-50%) translateY(0) scale(1); }
+}
 
 
 </script>
@@ -304,6 +378,9 @@ body.night {
 </style>
 </head>
 <body>
+
+<div class="rainbow-bar"></div>
+<div class="rainbow-glow"></div>
 
 <script>
 function scheduleNotif() {
@@ -537,10 +614,10 @@ document.getElementById("pixel-mascot").addEventListener("click", ()=>{
   waveTimer = 700; // 0.7 detik lambaian
 
   const msgs = [
-    "Hii cayang Mamass ♡",
-    "Mamass kangen awhh 😚",
+    "Hii cayangnaa Mamass ♡",
+    "Kata mas Fian, kamu bisa mainin websitenya 😚",
     "Aii lucuu bangett!",
-    "Cayangg paling gemayyy 💕"
+    "Istrinya mas Fian cantik bangett 💕"
   ];
 
   const bubble = document.createElement("div");
@@ -1057,8 +1134,191 @@ setInterval(() => {
 }, 10000);
 </script>
 
+<script>
+// MAGIC TOUCH PARTICLES ✨
+// Efek sparkle kecil saat layar disentuh
 
+function createSparkle(x, y) {
+    const spark = document.createElement("div");
+    spark.textContent = "✨";
+    spark.style.position = "fixed";
+    spark.style.left = x + "px";
+    spark.style.top = y + "px";
+    spark.style.transform = "translate(-50%, -50%)";
+    spark.style.fontSize = (16 + Math.random() * 14) + "px";
+    spark.style.opacity = "1";
+    spark.style.pointerEvents = "none";
+    spark.style.transition = "all 0.8s ease-out";
+    spark.style.zIndex = 999999;
+
+    document.body.appendChild(spark);
+
+    // animasi menghilang
+    setTimeout(() => {
+        spark.style.transform = "translate(-50%, -80px) scale(0.5)";
+        spark.style.opacity = "0";
+    }, 50);
+
+    setTimeout(() => spark.remove(), 900);
+}
+
+// Event untuk klik biasa
+document.addEventListener("click", (e) => {
+    createSparkle(e.clientX, e.clientY);
+});
+
+// Event untuk layar HP (sentuh)
+document.addEventListener("touchstart", (e) => {
+    for (let i = 0; i < 2; i++) {
+        const t = e.touches[0];
+        createSparkle(t.clientX + Math.random()*20-10, t.clientY + Math.random()*20-10);
+    }
+});
+</script>
+
+<script>
+// === LOVE WEATHER AUTOMATIC MODE ===
+function applyLoveWeather() {
+    const now = new Date();
+    const hour = now.getHours();
+
+    // Bersihkan semua class theme
+    document.body.classList.remove("love-morning", "love-day", "love-evening", "love-night");
+
+    // PAGI
+    if (hour >= 5 && hour < 10) {
+        document.body.classList.add("love-morning");
+    }
+    // SIANG
+    else if (hour >= 10 && hour < 15) {
+        document.body.classList.add("love-day");
+    }
+    // SORE
+    else if (hour >= 15 && hour < 18) {
+        document.body.classList.add("love-evening");
+    }
+    // MALAM
+    else {
+        document.body.classList.add("love-night");
+
+        // tambahkan bintang malam
+        for (let i = 0; i < 40; i++) {
+            let star = document.createElement("div");
+            star.className = "star";
+            star.style.top = Math.random() * 100 + "vh";
+            star.style.left = Math.random() * 100 + "vw";
+            star.style.animationDelay = Math.random() * 2 + "s";
+            document.body.appendChild(star);
+        }
+    }
+}
+
+// Jalankan saat halaman dibuka
+applyLoveWeather();
+</script>
 	
+<!-- REAL-TIME GREETING -->
+<div id="greetingBox" style="
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    background: rgba(255,255,255,0.7);
+    padding: 10px 20px;
+    border-radius: 14px;
+    font-size: 16px;
+    color: #d63384;
+    box-shadow: 0 5px 14px rgba(0,0,0,0.15);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: all .6s ease;
+    z-index: 999999;
+">
+</div>
+
+<script>
+function updateGreeting() {
+    const g = document.getElementById("greetingBox");
+    const hour = new Date().getHours();
+    let text = "";
+
+    if (hour >= 5 && hour < 11) {
+        text = "Selamat pagi cayanggkuww 💗";
+    } 
+    else if (hour >= 11 && hour < 15) {
+        text = "Selamat siang istrinaa Mamass ✨";
+    }
+    else if (hour >= 15 && hour < 18) {
+        text = "Selamat sore cayanggkuww sayangg 💕";
+    }
+    else {
+        text = "Selamat malam Cayangkuww… enda boyee begadang yaw 😘";
+    }
+
+    g.textContent = text;
+
+    setTimeout(() => {
+        g.style.opacity = "1";
+        g.style.transform = "translateX(-50%) scale(1)";
+    }, 300);
+
+    // hilang pelan setelah 7 detik
+    setTimeout(() => {
+        g.style.opacity = "0";
+        g.style.transform = "translateX(-50%) scale(0.8)";
+    }, 7000);
+}
+
+updateGreeting();
+
+let heartClicks = 0;
+let heartTimer = null;
+
+// Fungsi ledakan hati
+function heartAttack() {
+    for (let i = 0; i < 80; i++) {
+        const heart = document.createElement("div");
+        heart.textContent = "💖";
+        heart.style.position = "fixed";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.top = Math.random() * 100 + "vh";
+        heart.style.fontSize = (20 + Math.random() * 40) + "px";
+        heart.style.opacity = 1;
+        heart.style.transform = "scale(0)";
+        heart.style.transition = "transform .6s, opacity 1.2s";
+        heart.style.zIndex = 9999999;
+
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+            heart.style.transform = "scale(1)";
+        }, 10);
+
+        setTimeout(() => {
+            heart.style.opacity = 0;
+            setTimeout(() => heart.remove(), 800);
+        }, 800);
+    }
+}
+
+// Deteksi 10x klik maskot
+const mascotHeart = document.getElementById("pixel-mascot");
+mascotHeart.addEventListener("click", () => {
+    heartClicks++;
+
+    if (heartTimer) clearTimeout(heartTimer);
+
+    // reset kalau lewat 4 detik
+    heartTimer = setTimeout(() => {
+        heartClicks = 0;
+    }, 4000);
+
+    if (heartClicks >=7) {
+        heartClicks = 0;
+        heartAttack();
+    }
+});
+</script>
 
 </body>
 </html>                                                            
