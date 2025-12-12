@@ -372,8 +372,13 @@ body.night {
     100% { transform: translateX(-50%) translateY(0) scale(1); }
 }
 
+@keyframes fortunePop {
+    from { transform: scale(0.6); opacity:0; }
+    to { transform: scale(1); opacity:1; }
+}
 
-</script>
+
+
 
 </style>
 </head>
@@ -1319,6 +1324,460 @@ mascotHeart.addEventListener("click", () => {
     }
 });
 </script>
+
+<!-- === FIND THE HIDDEN LOVE GAME === -->
+<script>
+// jumlah hati tersembunyi
+const TOTAL_HEARTS = 7;
+let foundHearts = 0;
+
+function spawnHiddenHearts() {
+    for (let i = 0; i < TOTAL_HEARTS; i++) {
+        const heart = document.createElement("div");
+        heart.textContent = "💖";
+        heart.classList.add("hidden-heart");
+
+        // posisi acak
+        heart.style.top = Math.random() * 80 + "vh";
+        heart.style.left = Math.random() * 80 + "vw";
+
+        heart.addEventListener("click", () => {
+            heart.classList.add("found");
+            foundHearts++;
+
+            // efek kecil
+            const float = document.createElement("div");
+            float.textContent = "💗";
+            float.classList.add("heart-float");
+            float.style.top = heart.style.top;
+            float.style.left = heart.style.left;
+            document.body.appendChild(float);
+
+            setTimeout(() => float.remove(), 800);
+
+            if (foundHearts === TOTAL_HEARTS) {
+                showHiddenLoveReward();
+            }
+        });
+
+        document.body.appendChild(heart);
+    }
+}
+
+function showHiddenLoveReward() {
+    const box = document.createElement("div");
+    box.className = "hidden-reward-box";
+    box.innerHTML = `
+        💘 <br>
+        Cayanggkuww nemu semua hati Mamass!! <br>
+        Mamass makin sayangg sama Aii hheheww 😙💗
+    `;
+    document.body.appendChild(box);
+
+    setTimeout(() => box.remove(), 4000);
+}
+
+// panggil setelah halaman ready
+setTimeout(spawnHiddenHearts, 1200);
+</script>
+
+<style>
+.hidden-heart {
+    position: fixed;
+    font-size: 26px;
+    cursor: pointer;
+    transition: transform .3s, opacity .3s;
+    z-index: 9999;
+}
+.hidden-heart:hover {
+    transform: scale(1.4);
+}
+.hidden-heart.found {
+    opacity: 0;
+    transform: scale(0);
+}
+.heart-float {
+    position: fixed;
+    font-size: 28px;
+    animation: floatUp 0.8s ease-out forwards;
+}
+@keyframes floatUp {
+    0% { opacity:1; transform:translateY(0); }
+    100% { opacity:0; transform:translateY(-40px); }
+}
+
+.hidden-reward-box {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.7);
+    background: linear-gradient(135deg,#ff8acb,#ffcce4);
+    padding: 20px 30px;
+    border-radius: 16px;
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.25);
+    animation: rewardPop .4s ease forwards;
+    z-index: 999999;
+}
+@keyframes rewardPop {
+    from { opacity:0; transform:translate(-50%,-50%) scale(0.6); }
+    to   { opacity:1; transform:translate(-50%,-50%) scale(1); }
+}
+</style>
+
+<button id="openTypingGame"
+style="
+ position: fixed;
+ left: 20px;
+ top: 20px;
+ padding: 10px 16px;
+ background:#ff7ac9;
+ color:white;
+ border:none;
+ border-radius:14px;
+ box-shadow:0 4px 10px rgba(0,0,0,0.2);
+ z-index:999999;
+ font-size:14px;
+ cursor:pointer;
+">
+💌 Typing Love Game
+</button>
+
+<div id="typingGamePopup" style="
+ display:none;
+ position:fixed;
+ top:0; left:0;
+ width:100%; height:100%;
+ background:rgba(0,0,0,0.6);
+ backdrop-filter:blur(4px);
+ z-index:9999999;
+ justify-content:center;
+ align-items:center;
+">
+
+  <div style="
+   width:90%; max-width:350px;
+   background:white;
+   padding:20px;
+   border-radius:16px;
+   box-shadow:0 0 20px rgba(0,0,0,0.3);
+   text-align:center;
+   position:relative;
+  ">
+  
+    <h3 style="color:#d63384; margin:0 0 8px;">💗 Typing Love Challenge</h3>
+    <p style="font-size:14px; color:#444; margin:4px 0 12px;">
+      Ketik kata cinta secepat mungkin sebelum waktu habis!
+    </p>
+
+    <div id="loveWord" style="
+      font-size:20px;
+      font-weight:600;
+      color:#ff6bad;
+      margin-bottom:10px;">
+    </div>
+
+    <input id="loveInput" type="text" placeholder="Ketik di sini..."
+    style="
+      width:90%;
+      padding:10px;
+      border:2px solid #ffc1dd;
+      border-radius:12px;
+      outline:none;
+      font-size:16px;
+      margin-bottom:14px;
+    ">
+
+    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+      <span id="loveTimer" style="font-size:16px; color:#ff4fa3;">⏳ 30</span>
+      <span id="loveScore" style="font-size:16px; color:#8a7bff;">💖 0</span>
+    </div>
+
+    <button id="closeTypingGame"
+    style="
+      padding:8px 14px;
+      background:#ff6bad;
+      color:white;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+    ">Tutup</button>
+
+  </div>
+</div>
+
+<script>
+const gamePopup = document.getElementById("typingGamePopup");
+const openGame = document.getElementById("openTypingGame");
+const closeGame = document.getElementById("closeTypingGame");
+
+const loveWord = document.getElementById("loveWord");
+const loveInput = document.getElementById("loveInput");
+const loveTimer = document.getElementById("loveTimer");
+const loveScore = document.getElementById("loveScore");
+
+let words = [
+  "sayang", "cayangku", "fibah", "biyan",
+  "love", "pelukk", "kiss", "lucuw",
+  "imut", "cantikk", "mamasssayangg"
+];
+
+let timer = 30;
+let score = 0;
+let gameInterval = null;
+
+function startTypingGame(){
+  timer = 30;
+  score = 0;
+  loveScore.textContent = "💖 " + score;
+  loveTimer.textContent = "⏳ " + timer;
+
+  pickWord();
+  loveInput.value = "";
+  loveInput.focus();
+
+  gameInterval = setInterval(()=>{
+    timer--;
+    loveTimer.textContent = "⏳ " + timer;
+    if(timer <= 0){
+      endGame();
+    }
+  },1000);
+}
+
+function pickWord(){
+  loveWord.textContent = words[Math.floor(Math.random()*words.length)];
+}
+
+// efek hati saat benar
+function spawnHeart(){
+  const h = document.createElement("div");
+  h.textContent = "💖";
+  h.style.position = "fixed";
+  h.style.left = (Math.random()*80+10)+"vw";
+  h.style.top = (Math.random()*80+10)+"vh";
+  h.style.fontSize = "24px";
+  h.style.opacity = "1";
+  h.style.transition = "1s";
+
+  document.body.appendChild(h);
+
+  setTimeout(()=>{
+    h.style.opacity = "0";
+    h.style.transform = "translateY(-20px)";
+  },50);
+
+  setTimeout(()=>h.remove(),1000);
+}
+
+loveInput.addEventListener("input",()=>{
+  if(loveInput.value.trim() === loveWord.textContent){
+    score++;
+    loveScore.textContent = "💖 " + score;
+
+    spawnHeart();
+    pickWord();
+    loveInput.value = "";
+  }
+});
+
+function endGame(){
+  clearInterval(gameInterval);
+
+  loveWord.innerHTML = "🎉";
+  loveWord.style.fontSize = "32px";
+
+  loveInput.style.display = "none";
+
+  setTimeout(()=>{
+    alert("Cayangg dapatt " + score + " love point! 💘 Wiww kerenn!");
+    gamePopup.style.display = "none";
+    loveInput.style.display = "block";
+  }, 400);
+}
+
+openGame.addEventListener("click", ()=>{
+  gamePopup.style.display = "flex";
+  startTypingGame();
+});
+
+closeGame.addEventListener("click", ()=>{
+  clearInterval(gameInterval);
+  gamePopup.style.display = "none";
+});
+</script>
+
+<!-- LOVE FORTUNE WHEEL -->
+<div id="fortune-wrapper" style="
+    position: fixed;
+    bottom: 150px;
+    right: 20px;
+    z-index: 9999999;
+">
+    <button id="fortuneBtn" style="
+        padding: 12px 20px;
+        border: none;
+        border-radius: 14px;
+        background: #ff82bc;
+        color: white;
+        font-size: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        cursor: pointer;
+    ">🎡 Putar Roda Cinta</button>
+</div>
+
+<div id="fortuneModal" style="
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.6);
+    z-index:1000000000;
+    justify-content:center;
+    align-items:center;
+">
+    <div style="
+        background:white;
+        padding:20px;
+        border-radius:16px;
+        width:300px;
+        text-align:center;
+        box-shadow:0 8px 20px rgba(0,0,0,0.25);
+        position:relative;
+        animation:fortunePop .3s ease;
+    ">
+        <h3 style="color:#ff3e88;">Roda Keberuntungan Cinta 💞</h3>
+        <canvas id="wheelCanvas" width="260" height="260"></canvas>
+
+        <button id="spinBtn" style="
+            margin-top:18px;
+            padding:10px 18px;
+            background:#ff6db4;
+            color:white;
+            border:none;
+            border-radius:12px;
+            font-size:15px;
+        ">Putar</button>
+
+        <button id="closeFortune" style="
+            margin-top:10px;
+            background:none;
+            border:none;
+            color:#555;
+            cursor:pointer;
+        ">tutup</button>
+    </div>
+</div>
+
+<script>
+const rewards = [
+    "Peluk virtual 3x 💞",
+    "Kecupan pipi dari Mamass 😚",
+    "Pesan cinta spesial 💌",
+    "Truth or Love challenge ❣️",
+    "Random compliment ✨",
+    "Doa sayang dari Mamass 🌸"
+];
+
+const canvas = document.getElementById("wheelCanvas");
+const ctx = canvas.getContext("2d");
+const size = canvas.width;
+const radius = size/2;
+const slices = rewards.length;
+const sliceAngle = (2*Math.PI)/slices;
+
+function drawWheel(){
+    for(let i=0;i<slices;i++){
+        let hue = i*(360/slices);
+        ctx.fillStyle = `hsl(${hue},80%,80%)`;
+
+        ctx.beginPath();
+        ctx.moveTo(radius, radius);
+        ctx.arc(radius, radius, radius, i*sliceAngle, (i+1)*sliceAngle);
+        ctx.lineTo(radius, radius);
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(radius, radius);
+        ctx.rotate(i*sliceAngle + sliceAngle/2);
+        ctx.fillStyle="#333";
+        ctx.textAlign="right";
+        ctx.font="14px Poppins";
+        ctx.fillText(rewards[i], radius-10, 5);
+        ctx.restore();
+    }
+}
+drawWheel();
+
+let spinning=false;
+let angle=0;
+
+function spinWheel(){
+    if(spinning) return;
+    spinning=true;
+
+    let speed=Math.random()*0.25+0.35;
+    let slowDown=0.995;
+
+    const spinLoop=setInterval(()=>{
+        angle+=speed;
+        speed*=slowDown;
+
+        ctx.save();
+        ctx.clearRect(0,0,size,size);
+        ctx.translate(radius,radius);
+        ctx.rotate(angle);
+        ctx.translate(-radius,-radius);
+        drawWheel();
+        ctx.restore();
+
+        if(speed<0.002){
+            clearInterval(spinLoop);
+            spinning=false;
+            showResult();
+        }
+    },16);
+}
+
+function showResult(){
+    const final=angle%(2*Math.PI);
+    const index=Math.floor((slices-final/sliceAngle)%slices);
+    const result=rewards[index];
+
+    const alertBox=document.createElement("div");
+    alertBox.textContent=result;
+    alertBox.style.position="fixed";
+    alertBox.style.top="50%";
+    alertBox.style.left="50%";
+    alertBox.style.transform="translate(-50%,-50%) scale(0.6)";
+    alertBox.style.background="linear-gradient(135deg,#ff8ecf,#ffc3e3)";
+    alertBox.style.padding="18px 28px";
+    alertBox.style.color="white";
+    alertBox.style.borderRadius="16px";
+    alertBox.style.fontSize="16px";
+    alertBox.style.boxShadow="0 8px 22px rgba(0,0,0,0.25)";
+    alertBox.style.zIndex="200000";
+    alertBox.style.animation="fortunePop .3s ease forwards";
+
+    document.body.appendChild(alertBox);
+
+    setTimeout(()=>{
+        alertBox.style.opacity="0";
+        alertBox.style.transform="translate(-50%,-50%) scale(0.6)";
+        setTimeout(()=>alertBox.remove(),400);
+    },2500);
+}
+
+document.getElementById("fortuneBtn").onclick=()=>{
+    document.getElementById("fortuneModal").style.display="flex";
+};
+document.getElementById("closeFortune").onclick=()=>{
+    document.getElementById("fortuneModal").style.display="none";
+};
+document.getElementById("spinBtn").onclick=spinWheel;
+</script>
+
 
 </body>
 </html>                                                            
